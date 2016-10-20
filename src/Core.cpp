@@ -51,13 +51,14 @@ Core::Core( ) :
 
 		fake++;
 	}
+    buttons = new SDL_Rect[8];
 }
 
 // #################################################
 //
 Core::~Core( )
 {
-
+    delete[] buttons;
 }
 
 // #################################################
@@ -787,6 +788,49 @@ Core::manageSDLKeyboard()
 		right = -63;
 		keyPressed = true;
 	}
+    else if(command_interface)
+    {
+        //printf("position x: %d, position y : %d\n", mouse_pos_x, mouse_pos_y);
+        for(int i = 0; i < 8; i++)
+        {
+            SDL_Rect box = buttons[i];
+            if( mouse_pos_x > box.x
+                && mouse_pos_x < box.x + box.w
+                && mouse_pos_y > box.y
+                && mouse_pos_y < box.y + box.h )
+            {
+                //printf("box[%d]\n", i);
+                switch(i)
+                {
+                    case 0: // Up
+                        left = 63;
+                        right = 63;
+                        break;
+                    case 1: // Left
+                        left = -63;
+                        right = 63;
+                        break;
+                    case 2: // Right
+                        left = 63;
+                        right = -63;
+                        break;
+                    case 3: // Down
+                        left = -63;
+                        right = -63;
+                        break;
+                    case 4: // Tout droit
+                        break;
+                    case 5: // Reculer
+                        break;
+                    case 6: // +
+                        break;
+                    case 7: // -
+                        break;
+                }
+            }
+        }
+        command_interface = false;
+    }
 
 	// COMMANDE MOTEUR
 	last_motor_access_.lock();
@@ -1218,7 +1262,6 @@ void Core::calc_info() {
 		sleep(1);
 		info_robot.unlock();
 	}
-
 
 }
 
