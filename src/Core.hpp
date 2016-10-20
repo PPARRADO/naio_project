@@ -41,11 +41,9 @@
 
 
 
-#define ENTRAXE 2.00
+#define ENTRAXE 32.00
 
-
-
-#define RAYON 20
+#define RAYON 0.31
 
 class Core
 {
@@ -61,21 +59,6 @@ public:
 	const int64_t IMAGE_SERVER_WATCHDOG_SENDING_RATE_MS = 100;
 	const int64_t IMAGE_PREPARING_RATE_MS = 25;
 
-	void setPosX(double posX);
-
-	void setPosY(double posY);
-
-	double getDistRoueGauche() const;
-
-	void setDistRoueGauche(double distRoueGauche);
-
-	double getDistRoueDroite() const;
-
-	void setDistRoueDroite(double distRoueDroite);
-
-	double getTeta() const;
-
-	void setTeta(double teta);
 
 	const int64_t TIME_BEFORE_IMAGE_LOST_MS = 500;
 public:
@@ -91,10 +74,6 @@ public:
 	void stopServerReadThread( );
 	void joinMainThread();
 	void joinServerReadThread();
-
-	double getPosX() const;
-
-	double getPosY() const;
 
 	int getTime() const;
 
@@ -133,6 +112,7 @@ private:
 
 	void draw_button(int posX, int posY, int width, int height);
 	void draw_command_interface(int posX, int posY);
+	void calc_info();
 
 
 private:
@@ -238,6 +218,26 @@ private:
 	double teta;
 	int fakeTime;
 public:
+	double getPosX() const;
+
+	void setPosX(double posX);
+
+	double getPosY() const;
+
+	void setPosY(double posY);
+
+	double getDistRoueGauche() const;
+
+	void setDistRoueGauche(double distRoueGauche);
+
+	double getDistRoueDroite() const;
+
+	void setDistRoueDroite(double distRoueDroite);
+
+	double getTeta() const;
+
+	void setTeta(double teta);
+
 	int getFakeTime() const;
 
 	void setFakeTime(int fakeTime);

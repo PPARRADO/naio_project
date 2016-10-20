@@ -78,6 +78,13 @@ Core::init( std::string hostAdress, uint16_t hostPort )
 	serverReadthreadStarted_ = false;
 	stopServerWriteThreadAsked_ = false;
 
+	posX = 0.0;
+	posY = 0.0;
+	distRoueGauche = 0.0;
+	distRoueDroite = 0.0;
+	teta = 0.0;
+	fakeTime = 0;
+
 	// ignore unused screen
 	(void)screen_;
 
@@ -121,6 +128,8 @@ Core::init( std::string hostAdress, uint16_t hostPort )
 
 	// creates main thread
 	graphicThread_ = std::thread( &Core::graphic_thread, this );
+
+	info_thread = std::thread( &Core::calc_info, this );
 
 #if DEBUG_INTERFACE == 1
 	serverReadThread_ = std::thread( &Core::server_read_thread, this );
@@ -351,6 +360,8 @@ Core::graphic_thread( )
 
 		char gps1_buff[ 100 ];
 		char gps2_buff[ 100 ];
+		char info[ 150 ];
+		char info2[ 150 ];
 		if( ha_gps_packet_ptr_ != nullptr )
 		{
 			snprintf( gps1_buff, sizeof( gps1_buff ), "GPS -> lat : %lf ; lon : %lf ; alt : %lf", ha_gps_packet_ptr->lat, ha_gps_packet_ptr->lon, ha_gps_packet_ptr->alt ) ;
@@ -362,6 +373,13 @@ Core::graphic_thread( )
 			snprintf( gps2_buff, sizeof( gps2_buff ), "GPS -> lnbsat : N/A ; fixlvl : N/A ; speed : N/A" );
 		}
 
+		// test
+
+		snprintf(info,sizeof(info),"POSX -> %f || POSY -> %f || distRoueGauche -> %f || distRoueDroite -> %f",posX,posY,distRoueGauche,distRoueDroite);
+		snprintf(info2,sizeof(info2),"teta -> %f || time -> %d",teta,fakeTime);
+		draw_text( info, 10, 460 );
+		draw_text( info2, 10, 470 );
+		// test
 		draw_text( gyro_buff, 10, 410 );
 		draw_text( accel_buff, 10, 420 );
 		draw_text( odo_buff, 10, 430 );
@@ -1170,6 +1188,41 @@ void Core::draw_button(int posX, int posY, int width, int height) {
 	SDL_RenderFillRect( renderer_, &bouton );
 }
 
+void Core::calc_info() {
+
+	while( !stopThreadAsked_ )
+	{
+		info_robot.lock();
+		//CALCUL
+		double distanceRoueGauche = getDistRoueGauche() /*+ calcul */;
+		double distanceRoueDroite = getDistRoueDroite() /*+ calcul */;
+
+		double tetaa = (distanceRoueGauche - distanceRoueDroite) / ENTRAXE;
+
+		double vitesseGauche = distanceRoueGauche - getDistRoueGauche();
+		double vitesseDroite = distanceRoueDroite - getDistRoueDroite();
+		double vitesseMoyenne = (vitesseGauche + vitesseDroite) / 2;
+
+		double x = getPosX() + vitesseMoyenne * RAYON * cos(tetaa);
+		double y = getPosY() + vitesseMoyenne * RAYON * sin(tetaa);
+
+		//UPDATE
+		setDistRoueDroite(distanceRoueDroite);
+		setDistRoueGauche(distanceRoueGauche);
+
+		setTeta(tetaa);
+
+		setPosX(x);
+		setPosY(y);
+		setFakeTime(getFakeTime()+1);
+		sleep(1);
+		info_robot.unlock();
+	}
+
+
+}
+
+
 void Core::draw_command_interface(int posX, int posY) {
 	int w_button = 35, h_button = 35;
 	// Direction pad
@@ -1230,4 +1283,52 @@ void Core::draw_command_interface(int posX, int posY) {
 
 	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
 	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
+}
+
+double Core::getPosX() const {
+	return posX;
+}
+
+void Core::setPosX(double posX) {
+	Core::posX = posX;
+}
+
+double Core::getPosY() const {
+	return posY;
+}
+
+void Core::setPosY(double posY) {
+	Core::posY = posY;
+}
+
+double Core::getDistRoueGauche() const {
+	return distRoueGauche;
+}
+
+void Core::setDistRoueGauche(double distRoueGauche) {
+	Core::distRoueGauche = distRoueGauche;
+}
+
+double Core::getDistRoueDroite() const {
+	return distRoueDroite;
+}
+
+void Core::setDistRoueDroite(double distRoueDroite) {
+	Core::distRoueDroite = distRoueDroite;
+}
+
+double Core::getTeta() const {
+	return teta;
+}
+
+void Core::setTeta(double teta) {
+	Core::teta = teta;
+}
+
+int Core::getFakeTime() const {
+	return fakeTime;
+}
+
+void Core::setFakeTime(int fakeTime) {
+	Core::fakeTime = fakeTime;
 }
