@@ -41,7 +41,7 @@
 
 
 
-#define ENTRAXE 32.00
+#define ENTRAXE 34.00
 
 #define RAYON 0.31
 
