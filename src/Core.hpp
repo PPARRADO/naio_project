@@ -140,6 +140,7 @@ private:
     int mouse_pos_x;
     int mouse_pos_y;
     bool command_interface;
+    SDL_Rect *buttons;
 
 	// codec part
 	Naio01Codec naioCodec_;
