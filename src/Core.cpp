@@ -1195,10 +1195,27 @@ void Core::draw_command_interface(int posX, int posY) {
 	draw_text("Reculer", posX + 10, posY + 170);
 
 	// Informations
-	draw_text("Distance parcourue: ", 	posX + 110, posY);
-	draw_text("Angle: ", 				posX + 110, posY + 30);
-	draw_text("Pos x: ", 				posX + 110, posY + 60);
-	draw_text("Pos y: ", 				posX + 110, posY + 90);
+	char text_distance [50];
+	char text_angle [50];
+	char text_posX [50];
+	char text_posY [50];
+
+	///////// variable temporaire de test /////////
+	double angle = 45.654654;
+	double distance = 600.984651;
+	double posXtest = 10.984561;
+	double posYtest = 65.984654;
+
+	// mise du test en buffer pour affichage dynamique
+	snprintf( text_distance, sizeof( text_distance ), "Distance parcourue: %7.3f", distance ) ;
+	snprintf( text_angle, sizeof( text_angle ), "Angle: %7.3f", angle ) ;
+	snprintf( text_posX, sizeof( text_posX ), "Pos x: %7.3f", posXtest) ;
+	snprintf( text_posY, sizeof( text_posY ), "Pos y: %7.3f", posYtest) ;
+
+	draw_text(text_distance, 	posX + 110, posY);
+	draw_text(text_angle, 				posX + 110, posY + 30);
+	draw_text(text_posX, 				posX + 110, posY + 60);
+	draw_text(text_posY, 				posX + 110, posY + 90);
 
 	// +/- button
 	draw_button(posX + w_button_auto + 30, posY + 120, w_button, h_button);
@@ -1207,5 +1224,10 @@ void Core::draw_command_interface(int posX, int posY) {
 	draw_text("-", posX + w_button_auto + 75 + w_button, posY + 130);
 
 	// Text
-	draw_text("Distance parcourue: ", posX + w_button_auto + 30, posY + 170);
+	char text_walk_distance [50];
+	//varaibele temporaire de test
+	double distanceAuto = 6.465 * 25;
+
+	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
+	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
 }
