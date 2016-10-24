@@ -1219,6 +1219,7 @@ void Core::server_write_thread( )
 	stopServerWriteThreadAsked_ = false;
 	serverWriteThreadStarted_ = false;
 }
+
 void Core::draw_button(int posX, int posY, int width, int height) {
 
 	SDL_SetRenderDrawColor( renderer_, 200, 200, 200, 255);
@@ -1267,7 +1268,19 @@ void Core::calc_info() {
 
 
 void Core::draw_command_interface(int posX, int posY) {
-	int w_button = 35, h_button = 35;
+    int w_button = 35, h_button = 35;
+    int w_button_auto = 80, h_button_auto = 30;
+
+    buttons[0] = {posX + 25, posY, w_button, h_button};
+    buttons[1] = {posX, posY + 40, w_button, h_button};
+    buttons[2] = {posX + 50, posY + 40, w_button, h_button};
+    buttons[3] = {posX + 25, posY + 80, w_button, h_button};
+    buttons[4] = {posX, posY + 120, w_button_auto, h_button_auto};
+    buttons[5] = {posX, posY + 160, w_button_auto, h_button_auto};
+    buttons[6] = {posX + w_button_auto + 30, posY + 120, w_button, h_button};
+    buttons[7] = {posX + w_button_auto + 60 + w_button, posY + 120, w_button, h_button};
+
+
 	// Direction pad
 	draw_button(posX + 25, posY, w_button, h_button);
     draw_text("Up", posX + 35, posY + 10);
@@ -1282,7 +1295,6 @@ void Core::draw_command_interface(int posX, int posY) {
     draw_text("Down", posX + 30, posY + 85);
 
 	// Button auto
-	int w_button_auto = 80, h_button_auto = 30;
 	draw_button(posX, posY + 120, w_button_auto, h_button_auto);
 	draw_button(posX, posY + 160, w_button_auto, h_button_auto);
 
