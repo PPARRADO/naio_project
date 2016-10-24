@@ -114,6 +114,9 @@ private:
 	void draw_command_interface(int posX, int posY);
 	void calc_info();
 
+	//tic detection functions
+	void tic_detection();
+
 
 private:
 	// thread part
@@ -218,6 +221,14 @@ private:
 	double distRoueDroite;
 	double teta;
 	int fakeTime;
+	int tic_rl=0;
+	int tic_fl=0;
+	int tic_rr=0;
+	int tic_fr=0;
+	double dist_rl = 0.0;
+	double dist_rr = 0.0;
+	double dist_fl = 0.0;
+	double dist_fr = 0.0;
 public:
 	double getPosX() const;
 

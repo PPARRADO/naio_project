@@ -1319,13 +1319,27 @@ void Core::draw_command_interface(int posX, int posY) {
 	draw_button(posX + w_button_auto + 60 + w_button, posY + 120, w_button, h_button);
 	draw_text("-", posX + w_button_auto + 75 + w_button, posY + 130);
 
-	// Text
-	char text_walk_distance [50];
-	//varaibele temporaire de test
-	double distanceAuto = 6.465 * 25;
+//	// Text
+	draw_text("Distance parcourue: ", posX + w_button_auto + 30, posY + 170);
+//	char text_walk_distance [50];
+//	//varaibele temporaire de test
+//	double distanceAuto = 6.465 * 25;
+//
+//	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
+//	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
+	tic_detection();
+	if(ha_odo_packet_ptr_== nullptr){
+		draw_text("no value", posX + w_button_auto + 30, posY + 180);
+	}
+	else{
+		char vdbl[10000];
+//            vdbl = (char *)malloc(sizeof(char)*50);
+		sprintf(vdbl, "%.3f", dist_rl);
 
-	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
-	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
+//    draw_text("", posX + w_button_auto + 30, posY + 180);
+		draw_text(vdbl, posX + w_button_auto + 30, posY + 180);
+//    std::cout << "Dist RL : " << dist_rl << endl;
+	}
 }
 
 double Core::getPosX() const {
@@ -1374,4 +1388,26 @@ int Core::getFakeTime() const {
 
 void Core::setFakeTime(int fakeTime) {
 	Core::fakeTime = fakeTime;
+}
+
+void Core::tic_detection() {
+
+	HaOdoPacketPtr hod = nullptr;
+//    dist_rl += 1;
+	hod = ha_odo_packet_ptr_;
+	if(hod == NULL){
+//		std::cout << "null" << endl;
+	}
+	else{
+		if(last_left_motor_>0 || last_right_motor_>0){
+			//Rear Left wheel
+			if(hod->rl!=tic_rl){
+				if(tic_rl==0){
+					dist_rl+=6.454;
+				}
+				tic_rl=hod->rl;
+			}
+		}
+	}
+
 }
