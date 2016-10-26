@@ -115,7 +115,7 @@ private:
 	void calc_info();
 
 	//tic detection functions
-	void tic_detection();
+	void tic_detection(HaOdoPacketPtr hod);
 
 
 private:
@@ -221,6 +221,7 @@ private:
 	double distRoueDroite;
 	double teta;
 	int fakeTime;
+    std::thread tic_thread;
 	int tic_rl=0;
 	int tic_fl=0;
 	int tic_rr=0;
