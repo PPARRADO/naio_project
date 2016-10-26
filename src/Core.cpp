@@ -14,7 +14,7 @@
 using namespace std;
 using namespace std::chrono;
 
-#define DEBUG_INTERFACE 0
+#define DEBUG_INTERFACE 1
 
 // #################################################
 //
@@ -36,7 +36,8 @@ Core::Core() :
         imageNaioCodec_{},
         last_left_motor_{0},
         last_right_motor_{0},
-        last_image_received_time_{0} {
+        last_image_received_time_{0},
+        dist_rl{0.0} {
     uint8_t fake = 0;
 
     for (int i = 0; i < 1000000; i++) {
@@ -1226,9 +1227,8 @@ void Core::draw_command_interface(int posX, int posY) {
     if (ha_odo_packet_ptr_ == nullptr) {
         draw_text("no value", posX + w_button_auto + 30, posY + 180);
     } else {
-        char vdbl[10000];
-//            vdbl = (char *)malloc(sizeof(char)*50);
-        sprintf(vdbl, "%.3f", dist_rl);
+        char vdbl[150];
+        snprintf(vdbl, sizeof(vdbl), "%.3f", dist_rl);
 
 //    draw_text("", posX + w_button_auto + 30, posY + 180);
         draw_text(vdbl, posX + w_button_auto + 30, posY + 180);
@@ -1285,9 +1285,7 @@ void Core::setFakeTime(int fakeTime) {
 }
 
 void Core::tic_detection() {
-
     HaOdoPacketPtr hod = nullptr;
-//    dist_rl += 1;
     hod = ha_odo_packet_ptr_;
     if (hod == NULL) {
 //		std::cout << "null" << endl;
