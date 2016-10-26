@@ -115,7 +115,7 @@ private:
 	void calc_info();
 
 	//tic detection functions
-	void tic_detection(HaOdoPacketPtr hod);
+	void tic_detection();
 
 
 private:
