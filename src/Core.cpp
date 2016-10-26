@@ -14,7 +14,7 @@
 using namespace std;
 using namespace std::chrono;
 
-#define DEBUG_INTERFACE 1
+#define DEBUG_INTERFACE 0
 
 // #################################################
 //
@@ -36,8 +36,7 @@ Core::Core() :
         imageNaioCodec_{},
         last_left_motor_{0},
         last_right_motor_{0},
-        last_image_received_time_{0},
-        dist_rl{0.0} {
+        last_image_received_time_{0} {
     uint8_t fake = 0;
 
     for (int i = 0; i < 1000000; i++) {
@@ -286,6 +285,11 @@ Core::graphic_thread() {
 
         // ##############################################
         char gyro_buff[100];
+//        char vdbl[4000];
+//        sprintf(vdbl, "%7.3f", dist_rl);
+//		cout << "Dist parcourue : " << vdbl << endl;
+//    draw_text("", posX + w_button_auto + 30, posY + 180);
+//        draw_text(vdbl, posX + 35 + 30, posY + 180);
 
         ha_gyro_packet_ptr_access_.lock();
         HaGyroPacketPtr ha_gyro_packet_ptr = ha_gyro_packet_ptr_;
@@ -361,8 +365,11 @@ Core::graphic_thread() {
         draw_text(gps1_buff, 10, 440);
         draw_text(gps2_buff, 10, 450);
 
-        // ##############################################
-        ApiPostPacketPtr api_post_packet_ptr = nullptr;
+		//code detection
+		tic_detection(ha_odo_packet_ptr);
+
+		// ##############################################
+		ApiPostPacketPtr api_post_packet_ptr = nullptr;
 
         api_post_packet_ptr_access_.lock();
         api_post_packet_ptr = api_post_packet_ptr_;
@@ -1223,17 +1230,6 @@ void Core::draw_command_interface(int posX, int posY) {
 //
 //	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
 //	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
-    tic_detection();
-    if (ha_odo_packet_ptr_ == nullptr) {
-        draw_text("no value", posX + w_button_auto + 30, posY + 180);
-    } else {
-        char vdbl[150];
-        snprintf(vdbl, sizeof(vdbl), "%.3f", dist_rl);
-
-//    draw_text("", posX + w_button_auto + 30, posY + 180);
-        draw_text(vdbl, posX + w_button_auto + 30, posY + 180);
-//    std::cout << "Dist RL : " << dist_rl << endl;
-    }
 }
 
 double Core::getPosX() const {
@@ -1284,21 +1280,43 @@ void Core::setFakeTime(int fakeTime) {
     Core::fakeTime = fakeTime;
 }
 
-void Core::tic_detection() {
-    HaOdoPacketPtr hod = nullptr;
-    hod = ha_odo_packet_ptr_;
-    if (hod == NULL) {
-//		std::cout << "null" << endl;
-    } else {
-        if (last_left_motor_ > 0 || last_right_motor_ > 0) {
-            //Rear Left wheel
-            if (hod->rl != tic_rl) {
-                if (tic_rl == 0) {
-                    dist_rl += 6.454;
-                }
-                tic_rl = hod->rl;
-            }
-        }
-    }
+void Core::tic_detection(HaOdoPacketPtr hod) {
+//    cout << "tdeb" << endl;
+    if((last_left_motor_>0 || last_right_motor_>0) && hod!=NULL ){
+		//Rear Left wheel
+		if(hod->rl!=tic_rl){
+			if(tic_rl==0){
+				dist_rl+=6.454;
+				cout << dist_rl << endl;
+			}
+			tic_rl=hod->rl;
+		}
 
+        //Rear Right wheel
+        if(hod->rr!=tic_rr){
+            if(tic_rr==0){
+                dist_rr+=6.454;
+                cout << dist_rr << endl;
+            }
+            tic_rr=hod->rr;
+        }
+
+        //Front Left wheel
+        if(hod->fl!=tic_fl){
+            if(tic_fl==0){
+                dist_fl+=6.454;
+                cout << dist_fl << endl;
+            }
+            tic_fl=hod->fl;
+        }
+
+        //Front Right wheel
+        if(hod->fr!=tic_fr){
+            if(tic_fr==0){
+                dist_fr+=6.454;
+                cout << dist_fr << endl;
+            }
+            tic_fr=hod->fr;
+        }
+	}
 }
