@@ -767,6 +767,8 @@ Core::manageSDLKeyboard() {
                         right = -63;
                         break;
                     case 4: // Tout droit
+                        mode_automatique = true;
+                        pos_init = dist_rl;
                         break;
                     case 5: // Reculer
                         break;
@@ -781,6 +783,13 @@ Core::manageSDLKeyboard() {
                 printf("No one button selected");
             }
         }
+
+    if(mode_automatique && dist_rl < pos_init + 100) {
+        left = 63;
+        right = 63;
+    } else {
+        mode_automatique = false;
+    }
 
     // COMMANDE MOTEUR
     last_motor_access_.lock();

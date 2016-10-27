@@ -145,6 +145,8 @@ private:
     int button_selected;
     bool command_interface;
     SDL_Rect *buttons;
+    bool mode_automatique = false;
+    double pos_init;
 
 	// codec part
 	Naio01Codec naioCodec_;
