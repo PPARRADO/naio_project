@@ -252,7 +252,7 @@ Core::graphic_thread() {
         // drawing part.
         SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255); // the rect color (solid red)
         SDL_Rect background;
-        background.w = 1200;
+        background.w = 800;
         background.h = 483;
         background.y = 0;
         background.x = 0;
@@ -359,6 +359,8 @@ Core::graphic_thread() {
         draw_text(odo_buff, 10, 430);
         draw_text(gps1_buff, 10, 440);
         draw_text(gps2_buff, 10, 450);
+
+        tic_detection(ha_odo_packet_ptr);
 
         // ##############################################
         ApiPostPacketPtr api_post_packet_ptr = nullptr;
@@ -626,7 +628,7 @@ Core::initSDL(const char *name, int szX, int szY) {
 
     sdl_color_red_ = {255, 0, 0, 0};
     sdl_color_white_ = {255, 255, 255, 0};
-    ttf_font_ = TTF_OpenFont("mono.ttf", 12);
+    ttf_font_ = TTF_OpenFont("/home/imerir/ClionProjects/naio_project/src/mono.ttf", 12);
 
     if (ttf_font_ == nullptr) {
         std::cerr << "Failed to load SDL Font! Error: " << TTF_GetError() << '\n';
@@ -664,7 +666,6 @@ Core::readSDLKeyboard() {
             case SDL_MOUSEBUTTONUP:
                 command_interface = true;
                 SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
-                dist_rl += 6.454;
                 break;
             default:
                 break;
@@ -1123,8 +1124,8 @@ void Core::calc_info() {
     while (!stopThreadAsked_) {
         info_robot.lock();
         //CALCUL
-        double distanceRoueGauche = getDistRoueGauche() /*+ calcul */;
-        double distanceRoueDroite = getDistRoueDroite() /*+ calcul */;
+        double distanceRoueGauche = getDistRoueGauche() + dist_rl;
+        double distanceRoueDroite = getDistRoueDroite() + dist_rr;
 
         double tetaa = (distanceRoueGauche - distanceRoueDroite) / ENTRAXE;
 
@@ -1223,16 +1224,28 @@ void Core::draw_command_interface(int posX, int posY) {
 //
 //	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
 //	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
-    tic_detection();
+    //tic_detection();
     if (ha_odo_packet_ptr_ == nullptr) {
       draw_text("no value", posX + w_button_auto + 30, posY + 180);
     } else {
-    char vdbl[150];
+    char vdbl1[150];
 //            vdbl = (char *)malloc(sizeof(char)*50);
-    sprintf(vdbl, "%.3f", dist_rl);
+    sprintf(vdbl1, "%.3f", dist_rl);
 
     //draw_text("", posX + w_button_auto + 30, posY + 180);
-    draw_text(vdbl, posX + w_button_auto + 30, posY + 180);
+    draw_text(vdbl1, posX + w_button_auto + 30, posY + 180);
+//    std::cout << "Dist RL : " << dist_rl << endl;
+    }
+
+    if (ha_odo_packet_ptr_ == nullptr) {
+        draw_text("no value", posX + w_button_auto + 30, posY + 190);
+    } else {
+        char vdbl2[150];
+//            vdbl = (char *)malloc(sizeof(char)*50);
+        sprintf(vdbl2, "%.3f", dist_rr);
+
+        //draw_text("", posX + w_button_auto + 30, posY + 180);
+        draw_text(vdbl2, posX + w_button_auto + 30, posY + 190);
 //    std::cout << "Dist RL : " << dist_rl << endl;
     }
 }
@@ -1285,23 +1298,43 @@ void Core::setFakeTime(int fakeTime) {
     Core::fakeTime = fakeTime;
 }
 
-void Core::tic_detection() {
+void Core::tic_detection(HaOdoPacketPtr hod) {
+//    cout << "tdeb" << endl;
+    if((last_left_motor_>0 || last_right_motor_>0) && hod!=NULL ){
+		//Rear Left wheel
+		if(hod->rl!=tic_rl){
+			if(tic_rl==0){
+				dist_rl+=6.454;
+				cout << dist_rl << endl;
+			}
+			tic_rl=hod->rl;
+		}
 
-    HaOdoPacketPtr hod = nullptr;
-//    dist_rl += 1;
-    hod = ha_odo_packet_ptr_;
-    if (hod == NULL) {
-//		std::cout << "null" << endl;
-    } else {
-        if (last_left_motor_ > 0 || last_right_motor_ > 0) {
-            //Rear Left wheel
-            if (hod->rl != tic_rl) {
-                if (tic_rl == 0) {
-                    dist_rl += 6.454;
-                }
-                tic_rl = hod->rl;
+        //Rear Right wheel
+        if(hod->rr!=tic_rr){
+            if(tic_rr==0){
+                dist_rr+=6.454;
+                cout << dist_rr << endl;
             }
+            tic_rr=hod->rr;
         }
-    }
 
+        //Front Left wheel
+        if(hod->fl!=tic_fl){
+            if(tic_fl==0){
+                dist_fl+=6.454;
+                cout << dist_fl << endl;
+            }
+            tic_fl=hod->fl;
+        }
+
+        //Front Right wheel
+        if(hod->fr!=tic_fr){
+            if(tic_fr==0){
+                dist_fr+=6.454;
+                cout << dist_fr << endl;
+            }
+            tic_fr=hod->fr;
+        }
+	}
 }
