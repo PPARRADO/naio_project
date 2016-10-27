@@ -835,9 +835,10 @@ Core::manageSDLKeyboard() {
                         left = -63;
                         right = -63;
                         break;
-                    case 4: // Tout droit
+                    case 4: // Automatique
                         mode_automatique = true;
                         pos_init = dist_rl;
+                        printf("Mode automatique\npos_init: %f", pos_init);
                         break;
                     case 5: // Reculer
                         break;
@@ -857,10 +858,13 @@ Core::manageSDLKeyboard() {
             }
         }
 
-    if(mode_automatique && dist_rl < pos_init + distance_a_parcourir) {
+    if(mode_automatique && (dist_rl < pos_init + distance_a_parcourir) ) {
         if(!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte\n");
             left = 63;
             right = 63;
+        } else {
+            printf("Mode automatique: Objet detecte\n");
         }
     } else {
         mode_automatique = false;
