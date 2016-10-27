@@ -742,7 +742,8 @@ Core::manageSDLKeyboard() {
         left = 63;
         right = -63;
         keyPressed = true;
-    } else if (command_interface) {
+    } else if (command_interface && !mode_automatique) {
+
         SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
         SDL_Rect box = buttons[button_selected];
             if (mouse_pos_x > box.x
