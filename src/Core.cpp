@@ -14,7 +14,7 @@
 using namespace std;
 using namespace std::chrono;
 
-#define DEBUG_INTERFACE 1
+#define DEBUG_INTERFACE 0
 
 // #################################################
 //
@@ -628,7 +628,7 @@ Core::initSDL(const char *name, int szX, int szY) {
 
     sdl_color_red_ = {255, 0, 0, 0};
     sdl_color_white_ = {255, 255, 255, 0};
-    ttf_font_ = TTF_OpenFont("mono.ttf", 12);
+    ttf_font_ = TTF_OpenFont("/home/imerir/ClionProjects/naio_project/src/mono.ttf", 12);
 
     if (ttf_font_ == nullptr) {
         std::cerr << "Failed to load SDL Font! Error: " << TTF_GetError() << '\n';
@@ -1133,31 +1133,34 @@ void Core::draw_button(int posX, int posY, int width, int height) {
 void Core::calc_info() {
 
     while (!stopThreadAsked_) {
-        info_robot.lock();
-        //CALCUL
-        double distanceRoueGauche = getDistRoueGauche() + dist_rl;
-        double distanceRoueDroite = getDistRoueDroite() + dist_rr;
 
-        double tetaa = (distanceRoueGauche - distanceRoueDroite) / ENTRAXE;
+        if((last_left_motor_>0 || last_right_motor_>0))
+        {
+            info_robot.lock();
+            //CALCUL
+            double distanceRoueGauche = getDistRoueGauche() + dist_rl;
+            double distanceRoueDroite = getDistRoueDroite() + dist_rr;
 
-        double vitesseGauche = distanceRoueGauche - getDistRoueGauche();
-        double vitesseDroite = distanceRoueDroite - getDistRoueDroite();
-        double vitesseMoyenne = (vitesseGauche + vitesseDroite) / 2;
+            double tetaa = (distanceRoueGauche - distanceRoueDroite) / ENTRAXE;
 
-        double x = getPosX() + vitesseMoyenne * RAYON * cos(tetaa);
-        double y = getPosY() + vitesseMoyenne * RAYON * sin(tetaa);
+            double vitesseGauche = distanceRoueGauche - getDistRoueGauche();
+            double vitesseDroite = distanceRoueDroite - getDistRoueDroite();
+            double vitesseMoyenne = (vitesseGauche + vitesseDroite) / 2;
 
-        //UPDATE
-        setDistRoueDroite(distanceRoueDroite);
-        setDistRoueGauche(distanceRoueGauche);
+            double x = getPosX() + vitesseMoyenne * RAYON * cos(tetaa);
+            double y = getPosY() + vitesseMoyenne * RAYON * sin(tetaa);
 
-        setTeta(tetaa);
+            //UPDATE
+            setDistRoueDroite(distanceRoueDroite);
+            setDistRoueGauche(distanceRoueGauche);
 
-        setPosX(x);
-        setPosY(y);
+            setTeta(tetaa);
+            setPosX(x);
+            setPosY(y);
+            info_robot.unlock();
+        }
         setFakeTime(getFakeTime() + 1);
         sleep(1);
-        info_robot.unlock();
     }
 
 }
@@ -1309,23 +1312,43 @@ void Core::setFakeTime(int fakeTime) {
     Core::fakeTime = fakeTime;
 }
 
-void Core::tic_detection() {
+void Core::tic_detection(HaOdoPacketPtr hod) {
+//    cout << "tdeb" << endl;
+    if((last_left_motor_>0 || last_right_motor_>0) && hod!=NULL ){
+		//Rear Left wheel
+		if(hod->rl!=tic_rl){
+			if(tic_rl==0){
+				dist_rl+=6.454;
+				cout << dist_rl << endl;
+			}
+			tic_rl=hod->rl;
+		}
 
-    HaOdoPacketPtr hod = nullptr;
-//    dist_rl += 1;
-    hod = ha_odo_packet_ptr_;
-    if (hod == NULL) {
-//		std::cout << "null" << endl;
-    } else {
-        if (last_left_motor_ > 0 || last_right_motor_ > 0) {
-            //Rear Left wheel
-            if (hod->rl != tic_rl) {
-                if (tic_rl == 0) {
-                    dist_rl += 6.454;
-                }
-                tic_rl = hod->rl;
+        //Rear Right wheel
+        if(hod->rr!=tic_rr){
+            if(tic_rr==0){
+                dist_rr+=6.454;
+                cout << dist_rr << endl;
             }
+            tic_rr=hod->rr;
         }
-    }
 
+        //Front Left wheel
+        if(hod->fl!=tic_fl){
+            if(tic_fl==0){
+                dist_fl+=6.454;
+                cout << dist_fl << endl;
+            }
+            tic_fl=hod->fl;
+        }
+
+        //Front Right wheel
+        if(hod->fr!=tic_fr){
+            if(tic_fr==0){
+                dist_fr+=6.454;
+                cout << dist_fr << endl;
+            }
+            tic_fr=hod->fr;
+        }
+	}
 }
