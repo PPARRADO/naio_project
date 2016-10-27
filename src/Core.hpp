@@ -233,6 +233,9 @@ private:
 	double dist_rr = 0.0;
 	double dist_fl = 0.0;
 	double dist_fr = 0.0;
+    bool detectionObject = false;
+    int zoneDetection = 0;
+
 public:
 	double getPosX() const;
 

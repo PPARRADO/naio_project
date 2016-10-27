@@ -451,6 +451,7 @@ void Core::draw_text(char buffer[100], int x, int y) {
 // #################################################
 //
 void Core::draw_lidar(uint16_t lidar_distance_[271]) {
+    zoneDetection = 0;
     for (int i = 0; i < 271; i++) {
         double dist = static_cast<double>( lidar_distance_[i] ) / 10.0f;
 
@@ -458,7 +459,7 @@ void Core::draw_lidar(uint16_t lidar_distance_[271]) {
             dist = 5000.0f;
         }
 
-        if (i > 45) {
+        if (i > 45 && i < 226) {
             double x_cos = dist * cos(static_cast<double>((i - 45) * M_PI / 180. ));
             double y_sin = dist * sin(static_cast<double>((i - 45) * M_PI / 180. ));
 
@@ -474,8 +475,18 @@ void Core::draw_lidar(uint16_t lidar_distance_[271]) {
             lidar_pixel.y = static_cast<int>( y );
 
             SDL_RenderFillRect(renderer_, &lidar_pixel);
+
+            if( i > 70 && i < 201)
+            {
+                if(dist < 300)
+                {
+                    zoneDetection += 1;
+                }
+            }
         }
     }
+
+
 }
 
 // #################################################
@@ -1099,7 +1110,22 @@ void Core::server_write_thread() {
 
     while (not stopServerWriteThreadAsked_) {
         last_motor_access_.lock();
-
+        //Si je détecte beaucoup de point alors
+        if(zoneDetection > 45)
+        {
+            detectionObject = true;
+            //arrêt du robot
+            // COMMANDE MOTEUR
+            //last_motor_access_.lock();
+            last_left_motor_ = static_cast<int8_t >(0);
+            last_right_motor_ = static_cast<int8_t >(0);
+            //last_motor_access_.unlock();
+            printf("OBJECT DETECTED\n");
+        }
+        else
+        {
+            detectionObject = false;
+        }
         HaMotorsPacketPtr haMotorsPacketPtr = std::make_shared<HaMotorsPacket>(last_left_motor_, last_right_motor_);
 
         last_motor_access_.unlock();
@@ -1278,48 +1304,48 @@ double Core::getPosX() const {
     return posX;
 }
 
-void Core::setPosX(double posX) {
-    Core::posX = posX;
+void Core::setPosX(double possX) {
+    Core::posX = possX;
 }
 
 double Core::getPosY() const {
     return posY;
 }
 
-void Core::setPosY(double posY) {
-    Core::posY = posY;
+void Core::setPosY(double possY) {
+    Core::posY = possY;
 }
 
 double Core::getDistRoueGauche() const {
     return distRoueGauche;
 }
 
-void Core::setDistRoueGauche(double distRoueGauche) {
-    Core::distRoueGauche = distRoueGauche;
+void Core::setDistRoueGauche(double distRoueGauchee) {
+    Core::distRoueGauche = distRoueGauchee;
 }
 
 double Core::getDistRoueDroite() const {
     return distRoueDroite;
 }
 
-void Core::setDistRoueDroite(double distRoueDroite) {
-    Core::distRoueDroite = distRoueDroite;
+void Core::setDistRoueDroite(double distRoueDroitee) {
+    Core::distRoueDroite = distRoueDroitee;
 }
 
 double Core::getTeta() const {
     return teta;
 }
 
-void Core::setTeta(double teta) {
-    Core::teta = teta;
+void Core::setTeta(double tetaa) {
+    Core::teta = tetaa;
 }
 
 int Core::getFakeTime() const {
     return fakeTime;
 }
 
-void Core::setFakeTime(int fakeTime) {
-    Core::fakeTime = fakeTime;
+void Core::setFakeTime(int timefake) {
+    Core::fakeTime = timefake;
 }
 
 void Core::tic_detection(HaOdoPacketPtr hod) {
