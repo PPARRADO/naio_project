@@ -1108,6 +1108,15 @@ void Core::server_write_thread() {
         write(socket_desc_, first_buffer->data(), first_buffer->size());
     }
 
+    //direction calculation
+    if(last_left_motor_>0 && last_right_motor_>0){
+        dir_f = true;
+        dir_r = false;
+    }
+    if(last_left_motor_<0 && last_right_motor_<0){
+        dir_f = false;
+        dir_r = true;
+    }
     while (not stopServerWriteThreadAsked_) {
         last_motor_access_.lock();
         //Si je détecte beaucoup de point alors
@@ -1278,13 +1287,13 @@ void Core::draw_command_interface(int posX, int posY) {
     if (ha_odo_packet_ptr_ == nullptr) {
       draw_text("no value", posX + w_button_auto + 30, posY + 180);
     } else {
-    char vdbl1[150];
-//            vdbl = (char *)malloc(sizeof(char)*50);
-    sprintf(vdbl1, "%.3f", dist_rl);
+        char vdbl1[150];
+    //            vdbl = (char *)malloc(sizeof(char)*50);
+        sprintf(vdbl1, "%.3f", dist_rl);
 
-    //draw_text("", posX + w_button_auto + 30, posY + 180);
-    draw_text(vdbl1, posX + w_button_auto + 30, posY + 180);
-//    std::cout << "Dist RL : " << dist_rl << endl;
+        //draw_text("", posX + w_button_auto + 30, posY + 180);
+        draw_text(vdbl1, posX + w_button_auto + 30, posY + 180);
+    //    std::cout << "Dist RL : " << dist_rl << endl;
     }
 
     if (ha_odo_packet_ptr_ == nullptr) {
