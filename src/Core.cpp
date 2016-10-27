@@ -252,7 +252,7 @@ Core::graphic_thread() {
         // drawing part.
         SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255); // the rect color (solid red)
         SDL_Rect background;
-        background.w = 800;
+        background.w = 1200;
         background.h = 483;
         background.y = 0;
         background.x = 0;
@@ -628,7 +628,7 @@ Core::initSDL(const char *name, int szX, int szY) {
 
     sdl_color_red_ = {255, 0, 0, 0};
     sdl_color_white_ = {255, 255, 255, 0};
-    ttf_font_ = TTF_OpenFont("/home/imerir/ClionProjects/naio_project/src/mono.ttf", 12);
+    ttf_font_ = TTF_OpenFont("mono.ttf", 12);
 
     if (ttf_font_ == nullptr) {
         std::cerr << "Failed to load SDL Font! Error: " << TTF_GetError() << '\n';
@@ -663,9 +663,22 @@ Core::readSDLKeyboard() {
                 sdlKey_[event.key.keysym.scancode] = 0;
                 break;
 
-            case SDL_MOUSEBUTTONUP:
-                command_interface = true;
+            case SDL_MOUSEBUTTONDOWN:
                 SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
+
+                for (int i = 0; i < 8; i++) {
+                    SDL_Rect box = buttons[i];
+                    if (mouse_pos_x > box.x
+                        && mouse_pos_x < box.x + box.w
+                        && mouse_pos_y > box.y
+                        && mouse_pos_y < box.y + box.h) {
+                        button_selected = i;
+                        command_interface = true;
+                    }
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                command_interface = false;
                 break;
             default:
                 break;
@@ -730,15 +743,13 @@ Core::manageSDLKeyboard() {
         right = -63;
         keyPressed = true;
     } else if (command_interface) {
-        //printf("position x: %d, position y : %d\n", mouse_pos_x, mouse_pos_y);
-        for (int i = 0; i < 8; i++) {
-            SDL_Rect box = buttons[i];
+        SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
+        SDL_Rect box = buttons[button_selected];
             if (mouse_pos_x > box.x
                 && mouse_pos_x < box.x + box.w
                 && mouse_pos_y > box.y
                 && mouse_pos_y < box.y + box.h) {
-                //printf("box[%d]\n", i);
-                switch (i) {
+                switch (button_selected) {
                     case 0: // Up
                         left = 63;
                         right = 63;
@@ -766,10 +777,10 @@ Core::manageSDLKeyboard() {
                     default:
                         break;
                 }
+            } else {
+                printf("No one button selected");
             }
         }
-        command_interface = false;
-    }
 
     // COMMANDE MOTEUR
     last_motor_access_.lock();
@@ -1298,43 +1309,23 @@ void Core::setFakeTime(int fakeTime) {
     Core::fakeTime = fakeTime;
 }
 
-void Core::tic_detection(HaOdoPacketPtr hod) {
-//    cout << "tdeb" << endl;
-    if((last_left_motor_>0 || last_right_motor_>0) && hod!=NULL ){
-		//Rear Left wheel
-		if(hod->rl!=tic_rl){
-			if(tic_rl==0){
-				dist_rl+=6.454;
-				cout << dist_rl << endl;
-			}
-			tic_rl=hod->rl;
-		}
+void Core::tic_detection() {
 
-        //Rear Right wheel
-        if(hod->rr!=tic_rr){
-            if(tic_rr==0){
-                dist_rr+=6.454;
-                cout << dist_rr << endl;
+    HaOdoPacketPtr hod = nullptr;
+//    dist_rl += 1;
+    hod = ha_odo_packet_ptr_;
+    if (hod == NULL) {
+//		std::cout << "null" << endl;
+    } else {
+        if (last_left_motor_ > 0 || last_right_motor_ > 0) {
+            //Rear Left wheel
+            if (hod->rl != tic_rl) {
+                if (tic_rl == 0) {
+                    dist_rl += 6.454;
+                }
+                tic_rl = hod->rl;
             }
-            tic_rr=hod->rr;
         }
+    }
 
-        //Front Left wheel
-        if(hod->fl!=tic_fl){
-            if(tic_fl==0){
-                dist_fl+=6.454;
-                cout << dist_fl << endl;
-            }
-            tic_fl=hod->fl;
-        }
-
-        //Front Right wheel
-        if(hod->fr!=tic_fr){
-            if(tic_fr==0){
-                dist_fr+=6.454;
-                cout << dist_fr << endl;
-            }
-            tic_fr=hod->fr;
-        }
-	}
 }

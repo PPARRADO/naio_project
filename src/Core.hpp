@@ -142,6 +142,7 @@ private:
 	int sdlKey_[SDL_NUM_SCANCODES];
     int mouse_pos_x;
     int mouse_pos_y;
+    int button_selected;
     bool command_interface;
     SDL_Rect *buttons;
 
