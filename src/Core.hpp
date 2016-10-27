@@ -239,6 +239,8 @@ private:
 	double dist_rr = 0.0;
 	double dist_fl = 0.0;
 	double dist_fr = 0.0;
+	int zoneDetection = 0;
+	bool detectionObject = false;
     bool detectionObject_droite = false;
     bool detectionObject_gauche = false;
     bool detectionObject_milieu = false;
