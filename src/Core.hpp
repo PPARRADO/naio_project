@@ -45,6 +45,11 @@
 
 #define RAYON 0.31
 
+#define DETECTION 100
+
+#define PAS 10
+
+
 class Core
 {
 public:
@@ -234,8 +239,12 @@ private:
 	double dist_rr = 0.0;
 	double dist_fl = 0.0;
 	double dist_fr = 0.0;
-    bool detectionObject = false;
-    int zoneDetection = 0;
+    bool detectionObject_droite = false;
+    bool detectionObject_gauche = false;
+    bool detectionObject_milieu = false;
+    int zoneDetection_gauche = 0;
+    int zoneDetection_droite = 0;
+    int zoneDetection_milieu = 0;
 
     bool dir_f = false;
     bool dir_r = false;

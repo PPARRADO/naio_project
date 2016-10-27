@@ -14,7 +14,7 @@
 using namespace std;
 using namespace std::chrono;
 
-#define DEBUG_INTERFACE 0
+#define DEBUG_INTERFACE 1
 
 // #################################################
 //
@@ -451,7 +451,12 @@ void Core::draw_text(char buffer[100], int x, int y) {
 // #################################################
 //
 void Core::draw_lidar(uint16_t lidar_distance_[271]) {
-    zoneDetection = 0;
+    zoneDetection_gauche = 0;
+    zoneDetection_milieu = 0;
+    zoneDetection_droite = 0;
+    detectionObject_gauche = false;
+    detectionObject_milieu = false;
+    detectionObject_droite = false;
     for (int i = 0; i < 271; i++) {
         double dist = static_cast<double>( lidar_distance_[i] ) / 10.0f;
 
@@ -476,11 +481,42 @@ void Core::draw_lidar(uint16_t lidar_distance_[271]) {
 
             SDL_RenderFillRect(renderer_, &lidar_pixel);
 
-            if( i > 70 && i < 201)
+            if( i > 80 && i <= 120)
             {
-                if(dist < 300)
+                zoneDetection_gauche += dist;
+                if((i%10) == 0)
                 {
-                    zoneDetection += 1;
+                    if((zoneDetection_gauche/PAS)< DETECTION)
+                    {
+                        detectionObject_gauche = true;
+                    }
+                    zoneDetection_gauche = 0;
+                }
+            }
+
+            if( i > 120 && i <= 160)
+            {
+                zoneDetection_milieu += dist;
+                if((i%10) == 0)
+                {
+                    if((zoneDetection_milieu/PAS)< DETECTION)
+                    {
+                        detectionObject_milieu = true;
+                    }
+                    zoneDetection_milieu = 0;
+                }
+            }
+
+            if( i > 160 && i <= 200)
+            {
+                zoneDetection_droite += dist;
+                if((i%10) == 0)
+                {
+                    if((zoneDetection_droite/PAS)< DETECTION)
+                    {
+                        detectionObject_droite = true;
+                    }
+                    zoneDetection_droite = 0;
                 }
             }
         }
@@ -718,38 +754,57 @@ Core::manageSDLKeyboard() {
     }
 
     if (sdlKey_[SDL_SCANCODE_UP] == 1 and sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        left = 32;
-        right = 63;
-        keyPressed = true;
+        if(!detectionObject_gauche && !detectionObject_milieu )
+        {
+            left = 32;
+            right = 63;
+            keyPressed = true;
+        }
     } else if (sdlKey_[SDL_SCANCODE_UP] == 1 and sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        left = 63;
-        right = 32;
-        keyPressed = true;
+        if(!detectionObject_droite && !detectionObject_milieu )
+        {
+            left = 63;
+            right = 32;
+            keyPressed = true;
+        }
+
     } else if (sdlKey_[SDL_SCANCODE_DOWN] == 1 and sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        left = -32;
-        right = -63;
-        keyPressed = true;
+        if(!detectionObject_gauche ) {
+            left = -32;
+            right = -63;
+            keyPressed = true;
+        }
     } else if (sdlKey_[SDL_SCANCODE_DOWN] == 1 and sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        left = -63;
-        right = -32;
-        keyPressed = true;
+        if(!detectionObject_droite)
+        {
+            left = -63;
+            right = -32;
+            keyPressed = true;
+        }
+
     } else if (sdlKey_[SDL_SCANCODE_UP] == 1) {
-        left = 63;
-        right = 63;
-        keyPressed = true;
+        if(!detectionObject_milieu) {
+            left = 63;
+            right = 63;
+            keyPressed = true;
+        }
     } else if (sdlKey_[SDL_SCANCODE_DOWN] == 1) {
         left = -63;
         right = -63;
         keyPressed = true;
 
     } else if (sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        left = -63;
-        right = 63;
-        keyPressed = true;
+        if(!detectionObject_gauche) {
+            left = -63;
+            right = 63;
+            keyPressed = true;
+        }
     } else if (sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        left = 63;
-        right = -63;
-        keyPressed = true;
+        if(!detectionObject_droite) {
+            left = 63;
+            right = -63;
+            keyPressed = true;
+        }
     } else if (command_interface && !mode_automatique) {
         SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
         SDL_Rect box = buttons[button_selected];
@@ -759,16 +814,22 @@ Core::manageSDLKeyboard() {
                 && mouse_pos_y < box.y + box.h) {
                 switch (button_selected) {
                     case 0: // Up
-                        left = 63;
-                        right = 63;
+                        if(!detectionObject_milieu) {
+                            left = 63;
+                            right = 63;
+                        }
                         break;
                     case 1: // Left
-                        left = -63;
-                        right = 63;
+                        if(!detectionObject_gauche) {
+                            left = -63;
+                            right = 63;
+                        }
                         break;
                     case 2: // Right
-                        left = 63;
-                        right = -63;
+                        if(!detectionObject_droite) {
+                            left = 63;
+                            right = -63;
+                        }
                         break;
                     case 3: // Down
                         left = -63;
@@ -797,8 +858,10 @@ Core::manageSDLKeyboard() {
         }
 
     if(mode_automatique && dist_rl < pos_init + distance_a_parcourir) {
-        left = 63;
-        right = 63;
+        if(!detectionObject_milieu) {
+            left = 63;
+            right = 63;
+        }
     } else {
         mode_automatique = false;
     }
@@ -1111,9 +1174,8 @@ void Core::server_write_thread() {
     while (not stopServerWriteThreadAsked_) {
         last_motor_access_.lock();
         //Si je détecte beaucoup de point alors
-        if(zoneDetection > 45)
+        if(detectionObject_droite || detectionObject_milieu || detectionObject_gauche )
         {
-            detectionObject = true;
             //arrêt du robot
             // COMMANDE MOTEUR
             //last_motor_access_.lock();
@@ -1121,10 +1183,6 @@ void Core::server_write_thread() {
             last_right_motor_ = static_cast<int8_t >(0);
             //last_motor_access_.unlock();
             printf("OBJECT DETECTED\n");
-        }
-        else
-        {
-            detectionObject = false;
         }
         HaMotorsPacketPtr haMotorsPacketPtr = std::make_shared<HaMotorsPacket>(last_left_motor_, last_right_motor_);
 
