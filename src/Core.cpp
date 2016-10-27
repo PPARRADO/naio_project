@@ -1172,6 +1172,19 @@ void Core::server_write_thread() {
     }
 
     while (not stopServerWriteThreadAsked_) {
+        //direction calculation
+        if(last_left_motor_>0 && last_right_motor_>0){
+            dir_f = true;
+            dir_r = false;
+        }
+        if(last_left_motor_<0 && last_right_motor_<0){
+            dir_f = false;
+            dir_r = true;
+        }
+        if(last_left_motor_==0 || last_right_motor_==0){
+            dir_f = false;
+            dir_r = false;
+        }
         last_motor_access_.lock();
         //Si je détecte beaucoup de point alors
         if(detectionObject_droite || detectionObject_milieu || detectionObject_gauche )
@@ -1341,20 +1354,18 @@ void Core::draw_command_interface(int posX, int posY) {
     } else {
     char vdbl1[150];
     sprintf(vdbl1, "%.3f", dist_rl);
-
-    //draw_text("", posX + w_button_auto + 30, posY + 180);
+        strcat(vdbl1, " Left");
     draw_text(vdbl1, posX + w_button_auto + 30, posY + 170);
-//    std::cout << "Dist RL : " << dist_rl << endl;
+
     }
 
     if (ha_odo_packet_ptr_ == nullptr) {
         draw_text("no value", posX + w_button_auto + 30, posY + 180);
     } else {
         char vdbl2[150];
-//            vdbl = (char *)malloc(sizeof(char)*50);
         sprintf(vdbl2, "%.3f", dist_rr);
+        strcat(vdbl2, " Right");
         draw_text(vdbl2, posX + w_button_auto + 30, posY + 180);
-//    std::cout << "Dist RL : " << dist_rl << endl;
     }
 }
 
