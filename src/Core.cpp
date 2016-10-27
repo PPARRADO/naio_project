@@ -662,7 +662,6 @@ Core::exitSDL() {
 void
 Core::readSDLKeyboard() {
     SDL_Event event;
-
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             // Cas d'une touche enfoncée
@@ -676,7 +675,6 @@ Core::readSDLKeyboard() {
 
             case SDL_MOUSEBUTTONDOWN:
                 SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
-
                 for (int i = 0; i < 8; i++) {
                     SDL_Rect box = buttons[i];
                     if (mouse_pos_x > box.x
@@ -708,7 +706,6 @@ Core::manageSDLKeyboard() {
 
     if (sdlKey_[SDL_SCANCODE_ESCAPE] == 1) {
         stopThreadAsked_ = true;
-
         return true;
     }
 
@@ -754,7 +751,6 @@ Core::manageSDLKeyboard() {
         right = -63;
         keyPressed = true;
     } else if (command_interface && !mode_automatique) {
-
         SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
         SDL_Rect box = buttons[button_selected];
             if (mouse_pos_x > box.x
@@ -785,8 +781,12 @@ Core::manageSDLKeyboard() {
                     case 5: // Reculer
                         break;
                     case 6: // +
+                        distance_a_parcourir += 10.0;
                         break;
                     case 7: // -
+                        distance_a_parcourir -= 10.0;
+                        if(distance_a_parcourir < 0.0)
+                            distance_a_parcourir = 0.0;
                         break;
                     default:
                         break;
@@ -796,7 +796,7 @@ Core::manageSDLKeyboard() {
             }
         }
 
-    if(mode_automatique && dist_rl < pos_init + 100) {
+    if(mode_automatique && dist_rl < pos_init + distance_a_parcourir) {
         left = 63;
         right = 63;
     } else {
@@ -1108,15 +1108,6 @@ void Core::server_write_thread() {
         write(socket_desc_, first_buffer->data(), first_buffer->size());
     }
 
-    //direction calculation
-    if(last_left_motor_>0 && last_right_motor_>0){
-        dir_f = true;
-        dir_r = false;
-    }
-    if(last_left_motor_<0 && last_right_motor_<0){
-        dir_f = false;
-        dir_r = true;
-    }
     while (not stopServerWriteThreadAsked_) {
         last_motor_access_.lock();
         //Si je détecte beaucoup de point alors
@@ -1221,8 +1212,8 @@ void Core::draw_command_interface(int posX, int posY) {
     buttons[3] = {posX + 25, posY + 80, w_button, h_button};
     buttons[4] = {posX, posY + 120, w_button_auto, h_button_auto};
     buttons[5] = {posX, posY + 160, w_button_auto, h_button_auto};
-    buttons[6] = {posX + w_button_auto + 30, posY + 120, w_button, h_button};
-    buttons[7] = {posX + w_button_auto + 60 + w_button, posY + 120, w_button, h_button};
+    buttons[6] = {posX + w_button_auto + 30, posY + 90, w_button, h_button};
+    buttons[7] = {posX + w_button_auto + 60 + w_button, posY + 90, w_button, h_button};
 
 
     // Direction pad
@@ -1243,10 +1234,11 @@ void Core::draw_command_interface(int posX, int posY) {
     draw_button(buttons[5].x, buttons[5].y, buttons[5].w, buttons[5].h);
 
     // Text
-    draw_text("Avancer", posX + 10, posY + 130);
+    draw_text("Automatique", posX + 10, posY + 130);
     draw_text("Reculer", posX + 10, posY + 170);
 
     // Informations
+    char text_distance_a_parcourir[50];
     char text_distance[50];
     char text_angle[50];
     char text_posX[50];
@@ -1264,47 +1256,46 @@ void Core::draw_command_interface(int posX, int posY) {
     snprintf(text_posX, sizeof(text_posX), "Pos x: %7.3f", posXtest);
     snprintf(text_posY, sizeof(text_posY), "Pos y: %7.3f", posYtest);
 
-    draw_text(text_distance, posX + 110, posY);
-    draw_text(text_angle, posX + 110, posY + 30);
-    draw_text(text_posX, posX + 110, posY + 60);
-    draw_text(text_posY, posX + 110, posY + 90);
+    draw_text(text_distance, posX + 110, posY );
+    draw_text(text_angle, posX + 110, posY + 20);
+    draw_text(text_posX, posX + 110, posY + 40);
+    draw_text(text_posY, posX + 110, posY + 60);
 
     // +/- button
     draw_button(buttons[6].x, buttons[6].y, buttons[6].w, buttons[6].h);
-    draw_text("+", posX + w_button_auto + 45, posY + 130);
+    draw_text("+", posX + w_button_auto + 45, posY + 100);
     draw_button(buttons[7].x, buttons[7].y, buttons[7].w, buttons[7].h);
-    draw_text("-", posX + w_button_auto + 75 + w_button, posY + 130);
+    draw_text("-", posX + w_button_auto + 75 + w_button, posY + 100);
 
 //	// Text
-    draw_text("Distance parcourue: ", posX + w_button_auto + 30, posY + 170);
+    snprintf(text_distance_a_parcourir, sizeof(text_distance_a_parcourir), "Distance a parcourir: %.0f", distance_a_parcourir);
+    draw_text(text_distance_a_parcourir, posX + w_button_auto + 30, posY + 140);
+    draw_text("Distance parcourue: ", posX + w_button_auto + 30, posY + 160);
 //	char text_walk_distance [50];
-//	//varaibele temporaire de test
+//	//variable temporaire de test
 //	double distanceAuto = 6.465 * 25;
 //
 //	snprintf( text_walk_distance, sizeof( text_walk_distance ), "Distance parcourue: %7.3f", distanceAuto) ;
 //	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
     //tic_detection();
     if (ha_odo_packet_ptr_ == nullptr) {
-      draw_text("no value", posX + w_button_auto + 30, posY + 180);
+      draw_text("no value", posX + w_button_auto + 30, posY + 170);
     } else {
-        char vdbl1[150];
-    //            vdbl = (char *)malloc(sizeof(char)*50);
-        sprintf(vdbl1, "%.3f", dist_rl);
+    char vdbl1[150];
+    sprintf(vdbl1, "%.3f", dist_rl);
 
-        //draw_text("", posX + w_button_auto + 30, posY + 180);
-        draw_text(vdbl1, posX + w_button_auto + 30, posY + 180);
-    //    std::cout << "Dist RL : " << dist_rl << endl;
+    //draw_text("", posX + w_button_auto + 30, posY + 180);
+    draw_text(vdbl1, posX + w_button_auto + 30, posY + 170);
+//    std::cout << "Dist RL : " << dist_rl << endl;
     }
 
     if (ha_odo_packet_ptr_ == nullptr) {
-        draw_text("no value", posX + w_button_auto + 30, posY + 190);
+        draw_text("no value", posX + w_button_auto + 30, posY + 180);
     } else {
         char vdbl2[150];
 //            vdbl = (char *)malloc(sizeof(char)*50);
         sprintf(vdbl2, "%.3f", dist_rr);
-
-        //draw_text("", posX + w_button_auto + 30, posY + 180);
-        draw_text(vdbl2, posX + w_button_auto + 30, posY + 190);
+        draw_text(vdbl2, posX + w_button_auto + 30, posY + 180);
 //    std::cout << "Dist RL : " << dist_rl << endl;
     }
 }

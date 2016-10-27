@@ -147,6 +147,7 @@ private:
     SDL_Rect *buttons;
     bool mode_automatique = false;
     double pos_init;
+    double distance_a_parcourir = 0.0;
 
 	// codec part
 	Naio01Codec naioCodec_;
