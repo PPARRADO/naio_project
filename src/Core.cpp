@@ -98,25 +98,22 @@ Core::init(std::string hostAdress, uint16_t hostPort) {
 
     //Create socket
 #if DEBUG_INTERFACE == 1
-    socket_desc_ = socket( AF_INET, SOCK_STREAM, 0 );
+    socket_desc_ = socket(AF_INET, SOCK_STREAM, 0);
 
-    if (socket_desc_ == -1)
-    {
+    if (socket_desc_ == -1) {
         std::cout << "Could not create socket" << std::endl;
     }
 
-    server.sin_addr.s_addr = inet_addr( hostAdress.c_str() );
+    server.sin_addr.s_addr = inet_addr(hostAdress.c_str());
     server.sin_family = AF_INET;
-    server.sin_port = htons( hostPort );
+    server.sin_port = htons(hostPort);
 
     //Connect to remote server
-    if ( connect( socket_desc_, ( struct sockaddr * ) &server, sizeof( server ) ) < 0 )
-    {
-        puts( "connect error" );
+    if (connect(socket_desc_, (struct sockaddr *) &server, sizeof(server)) < 0) {
+        puts("connect error");
     }
-    else
-    {
-        puts( "Connected\n" );
+    else {
+        puts("Connected\n");
         socketConnected_ = true;
     }
 #endif
@@ -127,11 +124,11 @@ Core::init(std::string hostAdress, uint16_t hostPort) {
     info_thread = std::thread(&Core::calc_info, this);
 
 #if DEBUG_INTERFACE == 1
-    serverReadThread_ = std::thread( &Core::server_read_thread, this );
+    serverReadThread_ = std::thread(&Core::server_read_thread, this);
 
-    serverWriteThread_ = std::thread( &Core::server_write_thread, this );
+    serverWriteThread_ = std::thread(&Core::server_write_thread, this);
 
-    imageServerThread_ = std::thread( &Core::image_server_thread, this );
+    imageServerThread_ = std::thread(&Core::image_server_thread, this);
 
 #endif
 }
@@ -481,39 +478,30 @@ void Core::draw_lidar(uint16_t lidar_distance_[271]) {
 
             SDL_RenderFillRect(renderer_, &lidar_pixel);
 
-            if( i > 80 && i <= 120)
-            {
+            if (i > 80 && i <= 120) {
                 zoneDetection_gauche += dist;
-                if((i%10) == 0)
-                {
-                    if((zoneDetection_gauche/PAS)< DETECTION)
-                    {
+                if ((i % 10) == 0) {
+                    if ((zoneDetection_gauche / PAS) < DETECTION) {
                         detectionObject_gauche = true;
                     }
                     zoneDetection_gauche = 0;
                 }
             }
 
-            if( i > 120 && i <= 160)
-            {
+            if (i > 120 && i <= 160) {
                 zoneDetection_milieu += dist;
-                if((i%10) == 0)
-                {
-                    if((zoneDetection_milieu/PAS)< DETECTION)
-                    {
+                if ((i % 10) == 0) {
+                    if ((zoneDetection_milieu / PAS) < DETECTION) {
                         detectionObject_milieu = true;
                     }
                     zoneDetection_milieu = 0;
                 }
             }
 
-            if( i > 160 && i <= 200)
-            {
+            if (i > 160 && i <= 200) {
                 zoneDetection_droite += dist;
-                if((i%10) == 0)
-                {
-                    if((zoneDetection_droite/PAS)< DETECTION)
-                    {
+                if ((i % 10) == 0) {
+                    if ((zoneDetection_droite / PAS) < DETECTION) {
                         detectionObject_droite = true;
                     }
                     zoneDetection_droite = 0;
@@ -675,7 +663,7 @@ Core::initSDL(const char *name, int szX, int szY) {
 
     sdl_color_red_ = {255, 0, 0, 0};
     sdl_color_white_ = {255, 255, 255, 0};
-    ttf_font_ = TTF_OpenFont("/home/imerir/ClionProjects/naio_project/src/mono.ttf", 12);
+    ttf_font_ = TTF_OpenFont("mono.ttf", 12);
 
     if (ttf_font_ == nullptr) {
         std::cerr << "Failed to load SDL Font! Error: " << TTF_GetError() << '\n';
@@ -711,7 +699,7 @@ Core::readSDLKeyboard() {
 
             case SDL_MOUSEBUTTONDOWN:
                 SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
-                for (int i = 0; i < 8; i++) {
+                for (int i = 0; i < 10; i++) {
                     SDL_Rect box = buttons[i];
                     if (mouse_pos_x > box.x
                         && mouse_pos_x < box.x + box.w
@@ -754,36 +742,33 @@ Core::manageSDLKeyboard() {
     }
 
     if (sdlKey_[SDL_SCANCODE_UP] == 1 and sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        if(!detectionObject_gauche && !detectionObject_milieu )
-        {
+        if (!detectionObject_gauche && !detectionObject_milieu) {
             left = 32;
             right = 63;
             keyPressed = true;
         }
     } else if (sdlKey_[SDL_SCANCODE_UP] == 1 and sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        if(!detectionObject_droite && !detectionObject_milieu )
-        {
+        if (!detectionObject_droite && !detectionObject_milieu) {
             left = 63;
             right = 32;
             keyPressed = true;
         }
 
     } else if (sdlKey_[SDL_SCANCODE_DOWN] == 1 and sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        if(!detectionObject_gauche ) {
+        if (!detectionObject_gauche) {
             left = -32;
             right = -63;
             keyPressed = true;
         }
     } else if (sdlKey_[SDL_SCANCODE_DOWN] == 1 and sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        if(!detectionObject_droite)
-        {
+        if (!detectionObject_droite) {
             left = -63;
             right = -32;
             keyPressed = true;
         }
 
     } else if (sdlKey_[SDL_SCANCODE_UP] == 1) {
-        if(!detectionObject_milieu) {
+        if (!detectionObject_milieu) {
             left = 63;
             right = 63;
             keyPressed = true;
@@ -794,13 +779,13 @@ Core::manageSDLKeyboard() {
         keyPressed = true;
 
     } else if (sdlKey_[SDL_SCANCODE_LEFT] == 1) {
-        if(!detectionObject_gauche) {
+        if (!detectionObject_gauche) {
             left = -63;
             right = 63;
             keyPressed = true;
         }
     } else if (sdlKey_[SDL_SCANCODE_RIGHT] == 1) {
-        if(!detectionObject_droite) {
+        if (!detectionObject_droite) {
             left = 63;
             right = -63;
             keyPressed = true;
@@ -808,75 +793,134 @@ Core::manageSDLKeyboard() {
     } else if (command_interface && !mode_automatique) {
         SDL_GetMouseState(&mouse_pos_x, &mouse_pos_y);
         SDL_Rect box = buttons[button_selected];
-            if (mouse_pos_x > box.x
-                && mouse_pos_x < box.x + box.w
-                && mouse_pos_y > box.y
-                && mouse_pos_y < box.y + box.h) {
-                switch (button_selected) {
-                    case 0: // Up
-                        if(!detectionObject_milieu) {
-                            left = 63;
-                            right = 63;
-                        }
-                        break;
-                    case 1: // Left
-                        if(!detectionObject_gauche) {
-                            left = -63;
-                            right = 63;
-                        }
-                        break;
-                    case 2: // Right
-                        if(!detectionObject_droite) {
-                            left = 63;
-                            right = -63;
-                        }
-                        break;
-                    case 3: // Down
-                        left = -63;
-                        right = -63;
-                        break;
-                    case 4: // Automatique
-                        mode_automatique = true;
-                        pos_init = dist_rl;
-                        printf("Mode automatique\npos_init: %f", pos_init);
-                        break;
-                    case 5: // Reculer
-                        break;
-                    case 6: // +
-                        distance_a_parcourir += 10.0;
-                        break;
-                    case 7: // -
-                        distance_a_parcourir -= 10.0;
-                        if(distance_a_parcourir < 0.0)
-                            distance_a_parcourir = 0.0;
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                printf("No one button selected");
+        if (mouse_pos_x > box.x
+            && mouse_pos_x < box.x + box.w
+            && mouse_pos_y > box.y
+            && mouse_pos_y < box.y + box.h) {
+            switch (button_selected) {
+                case 0: // Up
+                    if (!detectionObject_milieu) {
+                        left = 10;
+                        right = 10;
+                    }
+                    break;
+                case 1: // Left
+                    if (!detectionObject_gauche) {
+                        left = 10;
+                        right = 63;
+                    }
+                    break;
+                case 2: // Right
+                    if (!detectionObject_droite) {
+                        left = 63;
+                        right = 10;
+                    }
+                    break;
+                case 3: // Down
+                    left = -63;
+                    right = -63;
+                    break;
+                case 4: // Automatique
+                    mode_automatique = true;
+                    pos_init = dist_rl;
+                    printf("Mode automatique\npos_init: %f", pos_init);
+                    break;
+                case 5: // Reculer
+                    break;
+                case 6: // +
+                    distance_a_parcourir += 6.454;
+                    break;
+                case 7: // -
+                    distance_a_parcourir -= 6.454;
+                    if (distance_a_parcourir < 0.0)
+                        distance_a_parcourir = 0.0;
+                    break;
+                case 8:
+                    largeur_culture += 6.454;
+                    break;
+                case 9:
+                    largeur_culture -= 6.454;
+                    if (largeur_culture <= 0.0)
+                        largeur_culture = 0.0;
+                default:
+                    break;
             }
-        }
-
-    if(mode_automatique && (dist_rl < pos_init + distance_a_parcourir) ) {
-        if(!detectionObject_milieu) {
-            printf("Mode automatique: Objet non detecte\n");
-            left = 63;
-            right = 63;
         } else {
-            printf("Mode automatique: Objet detecte\n");
+            printf("No one button selected");
         }
-    } else {
-        mode_automatique = false;
     }
-
     // COMMANDE MOTEUR
     last_motor_access_.lock();
     last_left_motor_ = static_cast<int8_t >( left * 2 );
     last_right_motor_ = static_cast<int8_t >( right * 2 );
     last_motor_access_.unlock();
 
-    return keyPressed;
+    // deplacement d'un longeur de rangée
+    if (mode_automatique && (dist_rl < pos_init + distance_a_parcourir) && range1) {
+        if (!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte Longueur rangée\n");
+            deplacement(1);
+        } else {
+            printf("Mode automatique: Objet detecte\n");
+        }
+        vir1 = true;
+    }
+        // debut demi tour
+        //premier virage
+    else if (mode_automatique && (virage_var < 200) && vir1) {
+        range1 = false;
+        if (!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte virage\n");
+            virage('g');
+            virage_var++;
+        } else {
+            printf("Mode automatique: Objet detecte\n");
+        }
+            range2 = true;
+            post_demi = dist_rl;
+        //marche arriere
+    } else if (mode_automatique && (marche_arriere < 400) && range2) {
+        vir1 = false;
+        virage_var = 0;
+        if (!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte Longueur rangée\n");
+            deplacement(-1);
+            marche_arriere++;
+        } else {
+            printf("Mode automatique: Objet detecte\n");
+        }
+        vir2 = true;
+        //deuxieme virage
+    } else if (mode_automatique && (virage_var < 200) && vir2) {
+        range2 = false;
+        if (!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte virage\n");
+            virage('g');
+            virage_var++;
+        } else {
+            printf("Mode automatique: Objet detecte\n");
+        }
+            range1 = true;
+            post_demi = dist_rl;
+        // retour
+    } else if (mode_automatique && (dist_rl < post_demi + distance_a_parcourir) && range1) {
+        vir1 = false;
+        if (!detectionObject_milieu) {
+            printf("Mode automatique: Objet non detecte Longueur rangée\n");
+            deplacement(1);
+        } else {
+            printf("Mode automatique: Objet detecte\n");
+        }
+
+    } else {
+        mode_automatique = false;
+        range1 = true;
+        virage_var = 0;
+    }
+
+
+    return
+            keyPressed;
 }
 
 // #################################################
@@ -1038,7 +1082,8 @@ void Core::image_server_read_thread() {
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int64_t>( WAIT_SERVER_IMAGE_TIME_RATE_MS )));
+        std::this_thread::sleep_for(
+                std::chrono::milliseconds(static_cast<int64_t>( WAIT_SERVER_IMAGE_TIME_RATE_MS )));
     }
 
     imageServerReadthreadStarted_ = false;
@@ -1177,22 +1222,21 @@ void Core::server_write_thread() {
 
     while (not stopServerWriteThreadAsked_) {
         //direction calculation
-        if(last_left_motor_>0 && last_right_motor_>0){
+        if (last_left_motor_ > 0 && last_right_motor_ > 0) {
             dir_f = true;
             dir_r = false;
         }
-        if(last_left_motor_<0 && last_right_motor_<0){
+        if (last_left_motor_ < 0 && last_right_motor_ < 0) {
             dir_f = false;
             dir_r = true;
         }
-        if(last_left_motor_==0 || last_right_motor_==0){
+        if (last_left_motor_ == 0 || last_right_motor_ == 0) {
             dir_f = false;
             dir_r = false;
         }
         last_motor_access_.lock();
         //Si je détecte beaucoup de point alors
-        if(detectionObject_droite || detectionObject_milieu || detectionObject_gauche )
-        {
+        if (detectionObject_droite || detectionObject_milieu || detectionObject_gauche) {
             //arrêt du robot
             // COMMANDE MOTEUR
             //last_motor_access_.lock();
@@ -1245,8 +1289,7 @@ void Core::calc_info() {
 
     while (!stopThreadAsked_) {
 
-        if((last_left_motor_>0 || last_right_motor_>0))
-        {
+        if ((last_left_motor_ > 0 || last_right_motor_ > 0)) {
             info_robot.lock();
             //CALCUL
             double distanceRoueGauche = getDistRoueGauche() + dist_rl;
@@ -1289,6 +1332,8 @@ void Core::draw_command_interface(int posX, int posY) {
     buttons[5] = {posX, posY + 160, w_button_auto, h_button_auto};
     buttons[6] = {posX + w_button_auto + 30, posY + 90, w_button, h_button};
     buttons[7] = {posX + w_button_auto + 60 + w_button, posY + 90, w_button, h_button};
+    buttons[8] = {posX + w_button_auto + 30, posY + 200, w_button, h_button};
+    buttons[9] = {posX + w_button_auto + 60 + w_button, posY + 200, w_button, h_button};
 
 
     // Direction pad
@@ -1314,6 +1359,7 @@ void Core::draw_command_interface(int posX, int posY) {
 
     // Informations
     char text_distance_a_parcourir[50];
+    char text_largeur_culture[50];
     char text_distance[50];
     char text_angle[50];
     char text_posX[50];
@@ -1331,7 +1377,7 @@ void Core::draw_command_interface(int posX, int posY) {
     snprintf(text_posX, sizeof(text_posX), "Pos x: %7.3f", posXtest);
     snprintf(text_posY, sizeof(text_posY), "Pos y: %7.3f", posYtest);
 
-    draw_text(text_distance, posX + 110, posY );
+    draw_text(text_distance, posX + 110, posY);
     draw_text(text_angle, posX + 110, posY + 20);
     draw_text(text_posX, posX + 110, posY + 40);
     draw_text(text_posY, posX + 110, posY + 60);
@@ -1342,10 +1388,20 @@ void Core::draw_command_interface(int posX, int posY) {
     draw_button(buttons[7].x, buttons[7].y, buttons[7].w, buttons[7].h);
     draw_text("-", posX + w_button_auto + 75 + w_button, posY + 100);
 
+    draw_button(buttons[8].x, buttons[8].y, buttons[8].w, buttons[8].h);
+    draw_text("+", posX + w_button_auto + 45, posY + 210);
+    draw_button(buttons[9].x, buttons[9].y, buttons[9].w, buttons[9].h);
+    draw_text("-", posX + w_button_auto + 75 + w_button, posY + 210);
+
 //	// Text
-    snprintf(text_distance_a_parcourir, sizeof(text_distance_a_parcourir), "Distance a parcourir: %.0f", distance_a_parcourir);
+    snprintf(text_distance_a_parcourir, sizeof(text_distance_a_parcourir), "Longeur de la rangee: %.3f",
+             distance_a_parcourir);
     draw_text(text_distance_a_parcourir, posX + w_button_auto + 30, posY + 140);
     draw_text("Distance parcourue: ", posX + w_button_auto + 30, posY + 160);
+
+    // text de la largeur de la rangée
+    snprintf(text_largeur_culture, sizeof(text_largeur_culture), "Largeur de la rangee: %.3f", largeur_culture);
+    draw_text(text_largeur_culture, posX + w_button_auto + 30, posY + 240);
 //	char text_walk_distance [50];
 //	//variable temporaire de test
 //	double distanceAuto = 6.465 * 25;
@@ -1354,12 +1410,12 @@ void Core::draw_command_interface(int posX, int posY) {
 //	draw_text(text_walk_distance, posX + w_button_auto + 30, posY + 170);
     //tic_detection();
     if (ha_odo_packet_ptr_ == nullptr) {
-      draw_text("no value", posX + w_button_auto + 30, posY + 170);
+        draw_text("no value", posX + w_button_auto + 30, posY + 170);
     } else {
-    char vdbl1[150];
-    sprintf(vdbl1, "%.3f", dist_rl);
+        char vdbl1[150];
+        sprintf(vdbl1, "%.3f", dist_rl);
         strcat(vdbl1, " Left");
-    draw_text(vdbl1, posX + w_button_auto + 30, posY + 170);
+        draw_text(vdbl1, posX + w_button_auto + 30, posY + 170);
 
     }
 
@@ -1423,41 +1479,78 @@ void Core::setFakeTime(int timefake) {
 
 void Core::tic_detection(HaOdoPacketPtr hod) {
 //    cout << "tdeb" << endl;
-    if((last_left_motor_>0 || last_right_motor_>0) && hod!=NULL ){
-		//Rear Left wheel
-		if(hod->rl!=tic_rl){
-			if(tic_rl==0){
-				dist_rl+=6.454;
-				cout << dist_rl << endl;
-			}
-			tic_rl=hod->rl;
-		}
+    if ((last_left_motor_ > 0 || last_right_motor_ > 0) && hod != NULL) {
+        //Rear Left wheel
+        if (hod->rl != tic_rl) {
+            if (tic_rl == 0) {
+                dist_rl += 6.454;
+                cout << dist_rl << endl;
+            }
+            tic_rl = hod->rl;
+        }
 
         //Rear Right wheel
-        if(hod->rr!=tic_rr){
-            if(tic_rr==0){
-                dist_rr+=6.454;
+        if (hod->rr != tic_rr) {
+            if (tic_rr == 0) {
+                dist_rr += 6.454;
                 cout << dist_rr << endl;
             }
-            tic_rr=hod->rr;
+            tic_rr = hod->rr;
         }
 
         //Front Left wheel
-        if(hod->fl!=tic_fl){
-            if(tic_fl==0){
-                dist_fl+=6.454;
+        if (hod->fl != tic_fl) {
+            if (tic_fl == 0) {
+                dist_fl += 6.454;
                 cout << dist_fl << endl;
             }
-            tic_fl=hod->fl;
+            tic_fl = hod->fl;
         }
 
         //Front Right wheel
-        if(hod->fr!=tic_fr){
-            if(tic_fr==0){
-                dist_fr+=6.454;
+        if (hod->fr != tic_fr) {
+            if (tic_fr == 0) {
+                dist_fr += 6.454;
                 cout << dist_fr << endl;
             }
-            tic_fr=hod->fr;
+            tic_fr = hod->fr;
         }
-	}
+    }
+}
+
+void Core::virage(char sens) {
+    int8_t left = 0;
+    int8_t right = 0;
+    if (sens == 'd' || sens == 'D') {
+        left = 63;
+        right = 10;
+    } else if (sens == 'g' || sens == 'G') {
+        left = 10;
+        right = 63;
+    }
+    else {
+        left = 0;
+        right = 0;
+        printf("Unknow command");
+    }
+
+    // COMMANDE MOTEUR
+    last_motor_access_.lock();
+    last_left_motor_ = static_cast<int8_t >( left * 2 );
+    last_right_motor_ = static_cast<int8_t >( right * 2 );
+    last_motor_access_.unlock();
+}
+
+void Core::deplacement(int direction) {
+    int8_t left = 0;
+    int8_t right = 0;
+
+    left = 10 * direction * pid;
+    right = 10 * direction * pid;
+
+    // COMMANDE MOTEUR
+    last_motor_access_.lock();
+    last_left_motor_ = static_cast<int8_t >( left * 2 );
+    last_right_motor_ = static_cast<int8_t >( right * 2 );
+    last_motor_access_.unlock();
 }

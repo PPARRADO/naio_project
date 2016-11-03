@@ -45,7 +45,7 @@
 
 #define RAYON 0.31
 
-#define DETECTION 100
+#define DETECTION 50
 
 #define PAS 10
 
@@ -152,7 +152,17 @@ private:
     SDL_Rect *buttons;
     bool mode_automatique = false;
     double pos_init;
-    double distance_a_parcourir = 0.0;
+	int virage_var = 0;
+    double distance_a_parcourir = 6.454 *5;
+	double largeur_culture = 6.454 * 3;
+
+	// bool de test
+	bool range1 = true;
+	bool range2 = false;
+	bool vir1 = false;
+	bool vir2 = false;
+	double post_demi = 0;
+	int marche_arriere = 0;
 
 	// codec part
 	Naio01Codec naioCodec_;
@@ -275,6 +285,14 @@ public:
 	int getFakeTime() const;
 
 	void setFakeTime(int fakeTime);
+
+	//chris
+	void deplacement(int direction);
+	void virage(char sens);
+
+	int pid = 1;
 };
+
+
 
 #endif

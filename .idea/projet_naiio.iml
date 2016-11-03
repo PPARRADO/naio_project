@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaKeypadPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCameraIntrinsicsPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCameraExtrinsicsPacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaGyroPacket.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaLedPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiLogToRobotPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCommandPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaDS4RemotePacket.cpp" isTestSource="false" />
@@ -17,22 +17,24 @@
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiLidarPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/Naio01Codec.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiValueResponsePacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaScreenPacket.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiIhmAskValuePacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaMotorsPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiGpsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaSpeakerPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiPressedIhmButtonPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiRunPlotPacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiWatchdogPacket.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaGyroPacket.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiEnumResponsePacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaLidarPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiIhmAskEnumPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiPostPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaAcceleroPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiLogToRobotPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaOdoPacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaLedPacket.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiGprsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiMoveActuatorPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiIhmDisplayPacket.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaScreenPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiAutoStatusPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaMagnetoPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaActuatorPacket.hpp" isTestSource="false" />
@@ -40,14 +42,12 @@
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/BaseNaio01Packet.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaGpsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaGpsPacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiEnumResponsePacket.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiWatchdogPacket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaLedPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiSmsPacket.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiIhmAskValuePacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiMotorsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaKeypadPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/HaGyroPacket.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiGprsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCameraIntrinsicsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCameraExtrinsicsPacket.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/ApiCodec/ApiCommandPacket.cpp" isTestSource="false" />
@@ -85,11 +85,11 @@
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLException.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLBuffer.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/Print.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLByteConversion.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/Utils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLBaseException.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLException.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLByteConversion.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLByteConversion.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/Utils.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/src/vitals/CLBuffer.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/ext/ApiCodec/modules/Helpers.cmake" isTestSource="false" />
@@ -105,14 +105,14 @@
     <orderEntry type="module-library">
       <library name="Header Search Paths">
         <CLASSES>
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />
         </CLASSES>
         <SOURCES>
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.9/include" />
           <root url="file:///usr/include" />
           <root url="file:///usr/local/include" />
         </SOURCES>
